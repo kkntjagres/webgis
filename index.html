@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard GIS Pertanian Jamus 🌾 (Secure Admin)</title>
+  <title>Dashboard GIS Pertanian Jamus 🌾 (Final with Sources)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -15,7 +15,7 @@
     .pointer-auto { pointer-events: auto; }
     .glass-effect { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12); }
     
-    /* ELITE COMPASS STYLING */
+    /* COMPASS STYLING */
     .compass-plate { background: radial-gradient(circle, #ffffff 0%, #f8fafc 100%); transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
     .compass-plate:hover { transform: scale(1.08) rotate(5deg); box-shadow: 0 20px 50px rgba(16, 185, 129, 0.2); }
     .north-point { filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.5)); }
@@ -23,10 +23,9 @@
 
     /* Custom Popup */
     .leaflet-popup-content-wrapper { border-radius: 24px; padding: 0; overflow: hidden; }
-    .leaflet-popup-content { margin: 0; width: 230px !important; }
+    .leaflet-popup-content { margin: 0; width: 240px !important; }
     
     .leaflet-control-zoom { border: none !important; margin-bottom: 110px !important; margin-right: 20px !important; }
-    .leaflet-control-zoom-in, .leaflet-control-zoom-out { border-radius: 12px !important; background: white !important; color: #059669 !important; border: 1px solid #e2e8f0 !important; }
 
     /* Admin Panel Styles */
     .admin-panel { position: fixed; right: -450px; top: 0; bottom: 0; width: 400px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 2000; }
@@ -39,7 +38,7 @@
   <div id="loader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-white transition-opacity duration-700">
     <div class="flex flex-col items-center">
       <div class="w-16 h-16 border-4 border-emerald-100 border-t-emerald-600 rounded-full animate-spin"></div>
-      <p class="mt-4 text-emerald-800 font-bold tracking-tight">Loading Data... 🛰️</p>
+      <p class="mt-4 text-emerald-800 font-bold tracking-tight">Loading Attribute Data... 🛰️</p>
     </div>
   </div>
 
@@ -127,7 +126,16 @@
           </div>
         </div>
         
-        <div class="grid grid-cols-2 gap-2 mt-8">
+        <div class="mt-6 pt-5 border-t border-slate-200/60">
+            <h4 class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-2">Sumber Data</h4>
+            <div class="text-[10px] font-bold text-slate-600 leading-relaxed space-y-1">
+                <p>• Perangkat Desa Jamus</p>
+                <p>• Gapoktan Desa Jamus</p>
+                <p>• Survei Lapangan</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mt-6">
             <button onclick="resetZoom()" class="py-4 bg-emerald-600 text-white rounded-2xl font-black text-[10px] tracking-widest hover:bg-emerald-700 shadow-lg active:scale-95 transition-all">
               RESET VIEW
             </button>
@@ -162,7 +170,7 @@
 
     <div id="adminContent" class="hidden flex flex-col h-full p-8 relative">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-black text-slate-800">Panel Kelola Data</h2>
+            <h2 class="text-xl font-black text-slate-800">Kelola Atribut</h2>
             <button onclick="logout()" class="text-[10px] font-bold text-red-500 bg-red-50 px-3 py-1 rounded-full hover:bg-red-100">LOGOUT</button>
         </div>
 
@@ -178,42 +186,55 @@
                         <span>📍</span> DIGITASI MANUAL (GAMBAR)
                     </button>
                     <p class="text-[9px] text-slate-400 mt-2 text-center leading-relaxed">
-                        Klik tombol di atas, lalu klik titik-titik di peta untuk membentuk area. Klik "Selesai Gambar" jika sudah.
+                        Klik tombol di atas, lalu klik titik-titik di peta.
                     </p>
                 </div>
 
                 <div class="space-y-3">
                     <input type="hidden" id="editIndex" value="">
+                    
                     <div>
-                        <label class="text-[9px] font-bold text-slate-400 uppercase">Jenis Komoditas</label>
+                        <label class="text-[9px] font-bold text-slate-400 uppercase">1. Jenis Lahan</label>
                         <select id="fieldLahan" class="w-full p-2.5 rounded-xl border-none shadow-sm font-bold text-xs mt-1">
                             <option value="Padi">Padi (Sawah)</option>
                             <option value="Pisang">Pisang (Kebun)</option>
                             <option value="Jagung">Jagung (Ladang)</option>
                         </select>
                     </div>
+
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="text-[9px] font-bold text-slate-400 uppercase">Luas (Ha)</label>
-                            <input type="number" id="fieldLuas" step="0.01" class="w-full p-2.5 rounded-xl border-none shadow-sm font-bold text-xs mt-1">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">2. Luas (Ha)</label>
+                            <input type="number" id="fieldLuas" step="0.01" class="w-full p-2.5 rounded-xl border-none shadow-sm font-bold text-xs mt-1" placeholder="0.00">
                         </div>
                         <div>
-                            <label class="text-[9px] font-bold text-slate-400 uppercase">Prod (Ton/Ha)</label>
-                            <input type="number" id="fieldProduksi" step="0.1" class="w-full p-2.5 rounded-xl border-none shadow-sm font-bold text-xs mt-1">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">3. Panen</label>
+                            <input type="text" id="fieldPanen" class="w-full p-2.5 rounded-xl border-none shadow-sm font-bold text-xs mt-1" placeholder="cth: 2-3x Panen">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">4. Irigasi</label>
+                            <input type="text" id="fieldIrigasi" class="w-full p-2.5 rounded-xl border-none shadow-sm font-bold text-xs mt-1" placeholder="cth: Teknis">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">5. Pro_Ton/Ha</label>
+                            <input type="text" id="fieldProduksi" class="w-full p-2.5 rounded-xl border-none shadow-sm font-bold text-xs mt-1" placeholder="Angka/Teks">
                         </div>
                     </div>
                     
                     <div class="flex gap-2 pt-2">
-                        <button onclick="saveData()" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-md">SIMPAN</button>
+                        <button onclick="saveData()" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-bold text-xs shadow-md">SIMPAN DATA</button>
                         <button onclick="resetForm()" class="px-4 py-3 bg-white text-slate-500 rounded-xl font-bold text-xs shadow-sm">RESET</button>
                     </div>
                 </div>
             </div>
 
             <div>
-                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Daftar Lahan Terdata</h4>
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Daftar Atribut</h4>
                 <div id="dataList" class="space-y-2">
-                    </div>
+                </div>
             </div>
         </div>
 
@@ -242,38 +263,28 @@
       L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', { maxZoom: 20 }).addTo(map);
       L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-      // --- PENGATURAN LAYER ORDER (Z-INDEX) ---
-      // Kita membuat "Pane" (wadah layer) khusus untuk Infrastruktur
-      // Default overlayPane z-index adalah 400. Kita buat infraPane 450 agar selalu di atas sawah.
+      // Pane Order: InfraPane agar Jalan/Irigasi diatas Digitasi
       map.createPane('infraPane');
       map.getPane('infraPane').style.zIndex = 450;
-      map.getPane('infraPane').style.pointerEvents = 'none'; // Agar tidak menutupi klik pada sawah jika hanya garis
+      map.getPane('infraPane').style.pointerEvents = 'none'; 
 
-      // Event Listener untuk Drawing
       map.on('click', onMapClick);
 
-      // Load Batas Desa (Paling bawah)
+      // 1. Batas Desa
       fetch('batasdesa.geojson').then(res => res.json()).then(data => {
         batasLayer = L.geoJSON(data, { style: { color: '#ffff00', weight: 4, dashArray: '12, 12', fillOpacity: 0, interactive: false } }).addTo(map);
         map.fitBounds(batasLayer.getBounds(), { padding: [50, 50] });
       });
 
-      // Load Infrastruktur (Jalan & Irigasi) - Dimasukkan ke 'infraPane' agar di atas
+      // 2. Infrastruktur (Jalan & Irigasi)
       fetch('jalan.geojson').then(res => res.json()).then(data => {
-          L.geoJSON(data, { 
-              pane: 'infraPane', // KUNCI: Taruh di pane khusus yg lebih tinggi
-              style: { color: '#ff0000', weight: 2.8, opacity: 0.95 } 
-          }).addTo(map);
+          L.geoJSON(data, { pane: 'infraPane', style: { color: '#ff0000', weight: 2.8, opacity: 0.95 } }).addTo(map);
       });
-      
       fetch('irigasi.geojson').then(res => res.json()).then(data => {
-          L.geoJSON(data, { 
-              pane: 'infraPane', // KUNCI: Taruh di pane khusus yg lebih tinggi
-              style: { color: '#2563eb', weight: 4.5, opacity: 1 } 
-          }).addTo(map);
+          L.geoJSON(data, { pane: 'infraPane', style: { color: '#2563eb', weight: 4.5, opacity: 1 } }).addTo(map);
       });
 
-      // Load Data Utama (Sawah/Kebun) - Masuk ke default overlayPane (z-index 400)
+      // 3. Data Komoditas
       fetch('komoditas.geojson')
         .then(res => res.json())
         .then(data => {
@@ -283,7 +294,7 @@
             setTimeout(() => document.getElementById('loader').remove(), 700);
         })
         .catch(err => {
-            console.log("Gagal load data, menggunakan data kosong");
+            console.log("Gagal load data");
             refreshLayers();
             document.getElementById('loader').remove();
         });
@@ -293,7 +304,6 @@
         if (geojsonLayer) map.removeLayer(geojsonLayer);
         
         geojsonLayer = L.geoJSON(dataStore, {
-          // Layer ini masuk ke default pane, jadi akan berada DI BAWAH 'infraPane'
           style: (f) => ({
             fillColor: f.properties.Lahan === 'Padi' ? '#facc15' : f.properties.Lahan === 'Pisang' ? '#22c55e' : '#f97316',
             weight: 1.8, color: 'white', fillOpacity: 0.78
@@ -310,15 +320,18 @@
         mouseover: (e) => { if(!isDrawing) { e.target.setStyle({ weight: 4, fillOpacity: 0.9, color: '#fff' }); e.target.bringToFront(); } },
         mouseout: (e) => { if(!isDrawing) geojsonLayer.resetStyle(e.target); }
       });
+      
       const p = feature.properties;
       layer.bindPopup(`
         <div class="custom-popup">
             <div class="bg-gradient-to-r from-emerald-600 to-emerald-500 p-4 text-white">
-                <h3 class="text-lg font-black leading-tight">${p.Lahan}</h3>
+                <h3 class="text-lg font-black leading-tight">${p.Lahan || '-'}</h3>
             </div>
-            <div class="p-5 space-y-3">
-                <div class="flex justify-between"><span class="text-[10px] font-bold text-slate-400 uppercase">Luas</span><span class="text-sm font-black text-emerald-600">${p.Luas_Ha} Ha</span></div>
-                <div class="flex justify-between"><span class="text-[10px] font-bold text-slate-400 uppercase">Produksi</span><span class="text-sm font-bold text-slate-700">${p['Pro_Ton/Ha'] || '-'} T/Ha</span></div>
+            <div class="p-4 space-y-2 text-slate-700">
+                <div class="flex justify-between border-b pb-1"><span class="text-[10px] font-bold text-slate-400 uppercase">Luas</span><span class="text-xs font-bold">${p.Luas_Ha} Ha</span></div>
+                <div class="flex justify-between border-b pb-1"><span class="text-[10px] font-bold text-slate-400 uppercase">Panen</span><span class="text-xs font-bold">${p.Panen || '-'}</span></div>
+                <div class="flex justify-between border-b pb-1"><span class="text-[10px] font-bold text-slate-400 uppercase">Irigasi</span><span class="text-xs font-bold">${p.Irigasi || '-'}</span></div>
+                <div class="flex justify-between"><span class="text-[10px] font-bold text-slate-400 uppercase">Pro/Ton/Ha</span><span class="text-xs font-bold text-emerald-600">${p['Pro_Ton/Ha'] || '-'}</span></div>
             </div>
         </div>`);
     }
@@ -333,112 +346,80 @@
       document.getElementById('stat-jagung').innerText = `${stats.Jagung.toFixed(2)} Ha`;
     }
 
-    // --- ADMIN & DRAWING LOGIC ---
+    // --- ADMIN LOGIC ---
 
-    function toggleAdminPanel() {
-        const panel = document.getElementById('adminPanel');
-        panel.classList.toggle('open');
-    }
-
+    function toggleAdminPanel() { document.getElementById('adminPanel').classList.toggle('open'); }
     function processLogin() {
-        const u = document.getElementById('adminUser').value;
-        const p = document.getElementById('adminPass').value;
-        if(u === 'admin' && p === 'admin123') {
+        if(document.getElementById('adminUser').value === 'admin' && document.getElementById('adminPass').value === 'admin123') {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('adminContent').classList.remove('hidden');
-        } else {
-            alert("Username/Password salah!");
-        }
+        } else { alert("Login Salah!"); }
     }
-
     function logout() {
         document.getElementById('loginScreen').classList.remove('hidden');
         document.getElementById('adminContent').classList.add('hidden');
-        document.getElementById('adminUser').value = '';
-        document.getElementById('adminPass').value = '';
         cancelDrawing();
     }
 
     // -- Drawing System --
     function startDrawing() {
-        if(isDrawing) {
-            finishDrawing(); 
-            return;
-        }
+        if(isDrawing) { finishDrawing(); return; }
         isDrawing = true;
         tempPoints = [];
-        document.getElementById('btnDraw').innerHTML = `<span>💾</span> SELESAI GAMBAR`;
-        document.getElementById('btnDraw').classList.replace('bg-white', 'bg-orange-100');
-        document.getElementById('btnDraw').classList.replace('text-emerald-600', 'text-orange-600');
-        document.getElementById('map').classList.add('drawing-cursor');
+        updateDrawBtn(true);
+        map.getContainer().classList.add('drawing-cursor');
         document.getElementById('drawStatus').classList.remove('hidden');
-        
         document.querySelector('.ui-overlay').style.pointerEvents = 'none';
-        alert("MODE GAMBAR AKTIF: Klik titik-titik di peta. Klik 'SELESAI GAMBAR' di panel kanan jika sudah.");
+        alert("Klik titik di peta.");
     }
-
     function onMapClick(e) {
         if(!isDrawing) return;
-
         tempPoints.push([e.latlng.lat, e.latlng.lng]);
-
         if (tempPolyline) map.removeLayer(tempPolyline);
         if (tempPolygon) map.removeLayer(tempPolygon);
-
         L.circleMarker(e.latlng, {radius: 4, color: 'red'}).addTo(map);
         tempPolyline = L.polyline(tempPoints, {color: 'red', dashArray: '5, 5'}).addTo(map);
-        
-        if(tempPoints.length > 2) {
-            tempPolygon = L.polygon(tempPoints, {color: 'orange', fillColor: 'orange', fillOpacity: 0.3, weight: 1}).addTo(map);
-        }
+        if(tempPoints.length > 2) tempPolygon = L.polygon(tempPoints, {color: 'orange', fillColor: 'orange', fillOpacity: 0.3, weight: 1}).addTo(map);
     }
-
     function finishDrawing() {
-        if(tempPoints.length < 3) {
-            alert("Minimal 3 titik untuk membuat area!");
-            return;
-        }
-
-        const coordinates = tempPoints.map(p => [p[1], p[0]]); 
-        coordinates.push(coordinates[0]); 
-
+        if(tempPoints.length < 3) { alert("Minimal 3 titik!"); return; }
+        const coords = tempPoints.map(p => [p[1], p[0]]); coords.push(coords[0]); 
         const newFeature = {
             type: "Feature",
             properties: {
                 Lahan: document.getElementById('fieldLahan').value,
                 Luas_Ha: document.getElementById('fieldLuas').value || 0,
-                "Pro_Ton/Ha": document.getElementById('fieldProduksi').value || 0
+                Panen: document.getElementById('fieldPanen').value || '',
+                Irigasi: document.getElementById('fieldIrigasi').value || '',
+                "Pro_Ton/Ha": document.getElementById('fieldProduksi').value || ''
             },
-            geometry: {
-                type: "Polygon",
-                coordinates: [coordinates]
-            }
+            geometry: { type: "Polygon", coordinates: [coords] }
         };
-
         dataStore.features.push(newFeature);
         cancelDrawing();
         refreshLayers();
-        alert("Area berhasil ditambahkan! Jangan lupa unduh GeoJSON.");
+        alert("Data berhasil ditambahkan!");
     }
-
     function cancelDrawing() {
         isDrawing = false;
         tempPoints = [];
         if (tempPolyline) map.removeLayer(tempPolyline);
         if (tempPolygon) map.removeLayer(tempPolygon);
-        
-        map.eachLayer(layer => {
-            if(layer instanceof L.CircleMarker && layer.options.color === 'red') {
-                map.removeLayer(layer);
-            }
-        });
-
-        document.getElementById('btnDraw').innerHTML = `<span>📍</span> DIGITASI MANUAL (GAMBAR)`;
-        document.getElementById('btnDraw').classList.replace('bg-orange-100', 'bg-white');
-        document.getElementById('btnDraw').classList.replace('text-orange-600', 'text-emerald-600');
-        document.getElementById('map').classList.remove('drawing-cursor');
+        map.eachLayer(l => { if(l instanceof L.CircleMarker && l.options.color === 'red') map.removeLayer(l); });
+        updateDrawBtn(false);
+        map.getContainer().classList.remove('drawing-cursor');
         document.getElementById('drawStatus').classList.add('hidden');
         document.querySelector('.ui-overlay').style.pointerEvents = 'none';
+    }
+    function updateDrawBtn(drawing) {
+        const btn = document.getElementById('btnDraw');
+        if(drawing) {
+            btn.innerHTML = `<span>💾</span> SELESAI GAMBAR`;
+            btn.className = "w-full py-3 border-2 border-dashed border-orange-300 bg-orange-50 text-orange-600 rounded-xl font-bold text-xs flex justify-center gap-2";
+        } else {
+            btn.innerHTML = `<span>📍</span> DIGITASI MANUAL (GAMBAR)`;
+            btn.className = "w-full py-3 border-2 border-dashed border-emerald-300 bg-white text-emerald-600 rounded-xl font-bold text-xs hover:bg-emerald-50 transition-colors flex justify-center gap-2";
+        }
     }
 
     // -- CRUD Logic --
@@ -449,73 +430,45 @@
             const div = document.createElement('div');
             div.className = 'bg-white p-3 rounded-xl border border-slate-100 flex justify-between items-center shadow-sm';
             div.innerHTML = `
-                <div>
-                    <div class="font-bold text-slate-700 text-xs">${f.properties.Lahan}</div>
-                    <div class="text-[10px] text-slate-400">${f.properties.Luas_Ha} Ha</div>
-                </div>
-                <div class="flex gap-1">
-                    <button onclick="editData(${i})" class="w-7 h-7 flex items-center justify-center bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100">✏️</button>
-                    <button onclick="deleteData(${i})" class="w-7 h-7 flex items-center justify-center bg-red-50 text-red-600 rounded-lg hover:bg-red-100">🗑️</button>
-                </div>
-            `;
+                <div><div class="font-bold text-slate-700 text-xs">${f.properties.Lahan}</div><div class="text-[10px] text-slate-400">Luas: ${f.properties.Luas_Ha}</div></div>
+                <div class="flex gap-1"><button onclick="editData(${i})" class="w-7 h-7 bg-blue-50 text-blue-600 rounded-lg">✏️</button><button onclick="deleteData(${i})" class="w-7 h-7 bg-red-50 text-red-600 rounded-lg">🗑️</button></div>`;
             list.appendChild(div);
         });
     }
-
     function saveData() {
         const idx = document.getElementById('editIndex').value;
         const newData = {
             Lahan: document.getElementById('fieldLahan').value,
             Luas_Ha: document.getElementById('fieldLuas').value,
+            Panen: document.getElementById('fieldPanen').value,
+            Irigasi: document.getElementById('fieldIrigasi').value,
             "Pro_Ton/Ha": document.getElementById('fieldProduksi').value
         };
-
-        if(idx !== "") {
-            dataStore.features[idx].properties = { ...dataStore.features[idx].properties, ...newData };
-            alert("Data berhasil diperbarui!");
-        } else {
-            alert("Untuk menambah data baru, silakan klik tombol 'DIGITASI MANUAL' dan gambar area di peta terlebih dahulu.");
-            return; 
-        }
-        
-        resetForm();
-        refreshLayers();
+        if(idx !== "") { dataStore.features[idx].properties = { ...dataStore.features[idx].properties, ...newData }; alert("Data diupdate!"); }
+        else { alert("Gunakan Digitasi Manual untuk tambah baru."); return; }
+        resetForm(); refreshLayers();
     }
-
     function editData(i) {
         const p = dataStore.features[i].properties;
         document.getElementById('editIndex').value = i;
         document.getElementById('fieldLahan').value = p.Lahan;
         document.getElementById('fieldLuas').value = p.Luas_Ha;
+        document.getElementById('fieldPanen').value = p.Panen || '';
+        document.getElementById('fieldIrigasi').value = p.Irigasi || '';
         document.getElementById('fieldProduksi').value = p['Pro_Ton/Ha'];
-        document.getElementById('formTitle').innerText = "Edit Data #" + (i+1);
     }
-
-    function deleteData(i) {
-        if(confirm("Yakin hapus data ini? Area di peta akan hilang.")) {
-            dataStore.features.splice(i, 1);
-            refreshLayers();
-        }
-    }
-
+    function deleteData(i) { if(confirm("Hapus?")) { dataStore.features.splice(i, 1); refreshLayers(); } }
     function resetForm() {
         document.getElementById('editIndex').value = "";
-        document.getElementById('formTitle').innerText = "Input Data";
-        document.getElementById('fieldLuas').value = "";
-        document.getElementById('fieldProduksi').value = "";
+        document.getElementById('fieldLuas').value = ""; document.getElementById('fieldPanen').value = "";
+        document.getElementById('fieldIrigasi').value = ""; document.getElementById('fieldProduksi').value = "";
     }
-
     function exportGeoJSON() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataStore));
-        const anchor = document.createElement('a');
-        anchor.href = dataStr;
-        anchor.download = "komoditas_updated.geojson";
-        anchor.click();
+        const anchor = document.createElement('a'); anchor.href = dataStr; anchor.download = "komoditas_revisi.geojson"; anchor.click();
     }
-
     function resetZoom() { if(batasLayer) map.fitBounds(batasLayer.getBounds(), { padding: [50, 50] }); }
     document.addEventListener('DOMContentLoaded', initMap);
   </script>
  </body>
 </html>
-
